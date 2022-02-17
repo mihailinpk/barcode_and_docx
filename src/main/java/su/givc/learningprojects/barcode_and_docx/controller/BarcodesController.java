@@ -4,11 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import su.givc.learningprojects.barcode_and_docx.service.BarcodeGenerateService;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Класс BarcodesController
@@ -46,14 +51,10 @@ public class BarcodesController {
      * @return сгенерированный штрих-код
      */
     @PostMapping(value = "/ean13")
-    public ResponseEntity<byte[]> createEAN13barcode(@RequestBody String barcode)    {
+    public ResponseEntity<byte[]> createEAN13barcode(@RequestBody String barcode) {
         try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ImageIO.write(barcodeGenerateService.generateEAN13barcodeImage(barcode), "png", byteArrayOutputStream);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .header("Content-Type", MediaType.IMAGE_PNG_VALUE)
-                    .body(byteArrayOutputStream.toByteArray());
-        } catch (Exception ex)   {
+            return generateResponse(barcodeGenerateService.generateEAN13barcodeImage(barcode));
+        } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -66,16 +67,26 @@ public class BarcodesController {
      * @return сгенерированный QR-код
      */
     @PostMapping(value = "/qrcode")
-    public ResponseEntity<byte[]> createQRcode(@RequestBody String barcode)   {
+    public ResponseEntity<byte[]> createQRcode(@RequestBody String barcode) {
         try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ImageIO.write(barcodeGenerateService.generateQRcodeImage(barcode), "png", byteArrayOutputStream);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .header("Content-Type", MediaType.IMAGE_PNG_VALUE)
-                    .body(byteArrayOutputStream.toByteArray());
-        } catch (Exception ex)   {
+            return generateResponse(barcodeGenerateService.generateQRcodeImage(barcode));
+        } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Сгенерировать HTTP-response со сгенерированным штрих-кодом в виде PNG-картинки или с сообщением об ошибке 500
+     *
+     * @param image сгенерированный штрих код в виде экземпляра {@link BufferedImage}
+     * @return ответ со сгенерированным штрих-кодом в виде PNG-картинки
+     */
+    private ResponseEntity<byte[]> generateResponse(BufferedImage image) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", byteArrayOutputStream);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("Content-Type", MediaType.IMAGE_PNG_VALUE)
+                .body(byteArrayOutputStream.toByteArray());
     }
 
 }
