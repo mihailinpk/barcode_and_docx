@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>barcode_and_docx</name>
-	<description>Project for leaning create barcode, create document *.docx, and past early created barcode to created *.docx file</description>
+	<description>Project for learning create barcode, create document *.docx, *.xlsx, *.pdf documents and past early created barcode to created documents</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
