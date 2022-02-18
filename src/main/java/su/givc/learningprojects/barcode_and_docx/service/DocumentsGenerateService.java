@@ -70,30 +70,31 @@ public class DocumentsGenerateService {
 
         XWPFParagraph mainTextParagraph = document.createParagraph();
         XWPFRun mainTextRun = mainTextParagraph.createRun();
-        mainTextRun.setText(text);;
+        mainTextRun.setText(text);
+        ;
         mainTextRun.setFontFamily("Times New Roman");
         mainTextRun.setTextPosition(20);
         mainTextRun.setFontSize(14);
 
         BufferedImage qrCode = barcodeGenerateService.generateQRcodeImage(text);
-        FileOutputStream fileQrOutputStream = new FileOutputStream("qr.png");
-        ImageIO.write(qrCode, "png", fileQrOutputStream);
-        fileQrOutputStream.flush();
-        fileQrOutputStream.close();
-        FileInputStream fileInputStream = new FileInputStream("qr.png");
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(qrCode, "png", byteArrayOutputStream);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 
         XWPFParagraph qrCodeParagraph = document.createParagraph();
         qrCodeParagraph.setAlignment(ParagraphAlignment.CENTER);
         XWPFRun qrCodeRun = qrCodeParagraph.createRun();
         qrCodeRun.setTextPosition(20);
-        qrCodeRun.addPicture(fileInputStream, XWPFDocument.PICTURE_TYPE_PNG, "qr.png", Units.toEMU(100), Units.toEMU(100));
+        qrCodeRun.addPicture(
+                byteArrayInputStream,
+                XWPFDocument.PICTURE_TYPE_PNG, "qr", Units.toEMU(100), Units.toEMU(100));
 
         FileOutputStream fileOutputStream = new FileOutputStream(fileName);
         document.write(fileOutputStream);
-        fileInputStream.close();
+        byteArrayOutputStream.close();
         fileOutputStream.close();
         document.close();
-        Files.delete(Paths.get("qr.png"));
 
     }
 

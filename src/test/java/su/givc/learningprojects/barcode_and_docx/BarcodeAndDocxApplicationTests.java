@@ -8,32 +8,25 @@ import su.givc.learningprojects.barcode_and_docx.service.DocumentsGenerateServic
 @SpringBootTest
 class BarcodeAndDocxApplicationTests {
 
-	DocumentsGenerateService documentsGenerateService;
+    DocumentsGenerateService documentsGenerateService;
 
-	@Autowired
-	public BarcodeAndDocxApplicationTests(DocumentsGenerateService documentsGenerateService) {
-		this.documentsGenerateService = documentsGenerateService;
-	}
+    @Autowired
+    public BarcodeAndDocxApplicationTests(DocumentsGenerateService documentsGenerateService) {
+        this.documentsGenerateService = documentsGenerateService;
+    }
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
-	@Test
-	void generateDocxDocument()	{
-		String text = "It's a long way to Tipperary,\n" +
-				"It's a long way to go;\n" +
-				"It's a long way to Tipperary,\n" +
-				"And the sweetest girl I know.\n" +
-				"Good-bye, Piccadilly,\n" +
-				"Farewell, Lester Square:\n" +
-				"It's a long, long way to Tipperary,\n" +
-				"But my heart's right there.";
-		try {
-			documentsGenerateService.generateWordDocument(text);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    @Test
+    void generateDocxDocument() {
+        String text = "Меченый злом, в сердце пустом, слышишь меня, я иду за тобой !";
+        try {
+            documentsGenerateService.generateWordDocument(text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
