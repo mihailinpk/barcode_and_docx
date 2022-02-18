@@ -19,6 +19,9 @@ target/
 *.iml
 *.ipr
 
+### Documents ###
+*.docx
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
