@@ -1,7 +1,5 @@
 package su.givc.learningprojects.barcode_and_docx.service;
 
-import com.google.zxing.WriterException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -11,11 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Класс-компонент DocumentsGenerateService
@@ -35,11 +31,11 @@ public class DocumentsGenerateService {
     @Value("${application.docx.title.text}")
     private String titleDocxText;
 
-    /**
-     * Имя генерируемого файла
-     */
-    @Value("${application.docx.filename}")
-    private String fileName;
+//    /**
+//     * Имя генерируемого файла
+//     */
+//    @Value("${application.docx.filename}")
+//    private String fileName;
 
     /**
      * Генерация штрих-кодов
@@ -56,8 +52,10 @@ public class DocumentsGenerateService {
      *
      * @param text текст для вставки в сгенерированный *.docx-документ и для генерации QR-кода для вставки в конец
      *             этого же документа
+     * @return сгенерированный документ в виде массива байт
+     * @throws Exception возможное исключение
      */
-    public void generateWordDocument(String text) throws Exception {
+    public byte[] generateWordDocument(String text) throws Exception {
 
         XWPFDocument document = new XWPFDocument();
         XWPFParagraph titleParagraph = document.createParagraph();
@@ -71,7 +69,6 @@ public class DocumentsGenerateService {
         XWPFParagraph mainTextParagraph = document.createParagraph();
         XWPFRun mainTextRun = mainTextParagraph.createRun();
         mainTextRun.setText(text);
-        ;
         mainTextRun.setFontFamily("Times New Roman");
         mainTextRun.setTextPosition(20);
         mainTextRun.setFontSize(14);
@@ -90,11 +87,11 @@ public class DocumentsGenerateService {
                 byteArrayInputStream,
                 XWPFDocument.PICTURE_TYPE_PNG, "qr", Units.toEMU(100), Units.toEMU(100));
 
-        FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-        document.write(fileOutputStream);
-        byteArrayOutputStream.close();
-        fileOutputStream.close();
+        document.write(byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
         document.close();
+        byteArrayOutputStream.close();
+        return byteArray;
 
     }
 
