@@ -60,6 +60,22 @@ public class BarcodesController {
     }
 
     /**
+     * Обработка POST-запроса {@code /code128/текст_для_генерации_штрих_кода}
+     * возвращает сгенерированный штрих-код в формате Code128 в виде картинки PNG
+     *
+     * @param barcode текст для генерации штрих-кода
+     * @return сгенерированный штрих-код
+     */
+    @PostMapping(value = "/code128")
+    public ResponseEntity<byte[]> createCode128barcode(@RequestBody String barcode) {
+        try {
+            return generateResponse(barcodeGenerateService.generateCode128barcodeImage(barcode));
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Обработка POST-запроса {@code /qrcode}
      * возращает сгенерированный QR-код в виде картинки PNG
      *

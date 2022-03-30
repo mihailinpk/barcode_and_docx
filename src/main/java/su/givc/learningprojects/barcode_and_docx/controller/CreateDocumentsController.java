@@ -1,6 +1,7 @@
 package su.givc.learningprojects.barcode_and_docx.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import su.givc.learningprojects.barcode_and_docx.service.DocumentsGenerateService;
@@ -24,6 +25,12 @@ public class CreateDocumentsController {
     DocumentsGenerateService documentsGenerateService;
 
     /**
+     * Имя генерируемого файла
+     */
+    @Value("${application.docx.filename}")
+    private String fileName;
+
+    /**
      * Конструктор, выполняет "dependency injection" сервиса генерации документов
      *
      * @param documentsGenerateService сервис генерации документов
@@ -37,16 +44,30 @@ public class CreateDocumentsController {
      * Обработка POST-запроса {@code /docx}
      * возвращает сгенерированный *.docx-документ с qr-кодом в конце
      *
-     * @param barcode текст для вставки в документ и генерации qr-кода
+     * @param text текст для вставки в документ и генерации qr-кода
      * @return сгенерированный *.docx-документ с qr-кодом в конце
      * @throws Exception возможное исключение
      */
     @PostMapping(value = "/docx")
-    public ResponseEntity<byte[]> generateDocsFile(@RequestBody String barcode) throws Exception {
+    public ResponseEntity<byte[]> generateDocsFile(@RequestBody String text) throws Exception {
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                .header("Content-Disposition", "attachment; filename=\"document.docx\"")
-                .body(documentsGenerateService.generateWordDocument(barcode));
+                .header("Content-Disposition", String.format("attachment; filename=\"%s\"", fileName))
+                .body(documentsGenerateService.generateWordDocument(text));
+    }
+
+    /**
+     * Обработка POST-запроса {@code /xlsx}
+     * возвращает сгенерированный *.xlsx-документ с Code128-кодом помещенным в нижний правый край листа
+     *
+     * @param text текст для вставки в документ и генерации Code128-кода
+     * @return *.xlsx-документ с Code128-кодом помещенным в нижний правый край листа
+     */
+    @PostMapping(value = "/xlsx")
+    public ResponseEntity<String> generateExcelFile(@RequestBody String text) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("Content-Type", MediaType.TEXT_PLAIN_VALUE)
+                .body(String.format("Text \"%s\" taken to backend", text));
     }
 
 }
