@@ -1,3 +1,3 @@
 #### PROJECT DESCRIPTION
 
-Project for learning create barcode, create document *.docx, *.xlsx, *.pdf documents and past early created barcode to created documents.
+Project for learning create barcode, create document *.docx and *.xlsx documents and past early created barcode to created documents.

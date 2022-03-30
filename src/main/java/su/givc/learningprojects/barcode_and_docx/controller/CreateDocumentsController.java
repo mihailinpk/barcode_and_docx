@@ -25,10 +25,16 @@ public class CreateDocumentsController {
     DocumentsGenerateService documentsGenerateService;
 
     /**
-     * Имя генерируемого файла
+     * Имя генерируемого *.docx файла
      */
     @Value("${application.docx.filename}")
-    private String fileName;
+    private String docxFileName;
+
+    /**
+     * Имя генерируемого *.xlsx файла
+     */
+    @Value("${application.xlsx.filename}")
+    private String xlsxFileName;
 
     /**
      * Конструктор, выполняет "dependency injection" сервиса генерации документов
@@ -52,7 +58,7 @@ public class CreateDocumentsController {
     public ResponseEntity<byte[]> generateDocsFile(@RequestBody String text) throws Exception {
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                .header("Content-Disposition", String.format("attachment; filename=\"%s\"", fileName))
+                .header("Content-Disposition", String.format("attachment; filename=\"%s\"", docxFileName))
                 .body(documentsGenerateService.generateWordDocument(text));
     }
 
@@ -64,10 +70,11 @@ public class CreateDocumentsController {
      * @return *.xlsx-документ с Code128-кодом помещенным в нижний правый край листа
      */
     @PostMapping(value = "/xlsx")
-    public ResponseEntity<String> generateExcelFile(@RequestBody String text) {
+    public ResponseEntity<byte[]> generateExcelFile(@RequestBody String text) throws Exception {
         return ResponseEntity.status(HttpStatus.OK)
-                .header("Content-Type", MediaType.TEXT_PLAIN_VALUE)
-                .body(String.format("Text \"%s\" taken to backend", text));
+                .header("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                .header("Content-Disposition", String.format("attachment; filename=\"%s\"", xlsxFileName))
+                .body(documentsGenerateService.generateExcelDocument(text));
     }
 
 }

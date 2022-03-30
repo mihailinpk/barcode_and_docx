@@ -42,7 +42,7 @@ class BarcodeAndDocxApplicationTests {
                     barcodeGenerateService.generateCode128barcodeImage(text),
                     "jpg",
                     new File(folderName + "/code128.jpg"));
-        } catch (Exception e)   {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
